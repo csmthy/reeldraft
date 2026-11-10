@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base href="/reeldraft/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1a0e12">
+<title>ReelDraft</title>
+<link rel="preload" href="static/fonts/big-shoulders-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="static/style.css?v=2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ffb53b'/%3E%3Cg fill='%231a0e12'%3E%3Ccircle cx='16' cy='8.5' r='3.2'/%3E%3Ccircle cx='16' cy='23.5' r='3.2'/%3E%3Ccircle cx='8.5' cy='16' r='3.2'/%3E%3Ccircle cx='23.5' cy='16' r='3.2'/%3E%3Ccircle cx='16' cy='16' r='1.6'/%3E%3C/g%3E%3C/svg%3E">
+</head>
+<body class="">
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-reel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="currentColor"/><g fill="#1a0e12"><circle cx="12" cy="6.4" r="2.5"/><circle cx="12" cy="17.6" r="2.5"/><circle cx="6.4" cy="12" r="2.5"/><circle cx="17.6" cy="12" r="2.5"/><circle cx="12" cy="12" r="1.2"/></g></symbol>
+  <symbol id="i-commercial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 4 4L21 7"/><path d="M15 7h6v6"/></g></symbol>
+  <symbol id="i-critics" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9.5L5 19.5v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></g></symbol>
+  <symbol id="i-audience" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3.5 7.5h17v3a2 2 0 0 0 0 3v3h-17v-3a2 2 0 0 0 0-3z"/><path stroke-dasharray="1.6 2" d="M15 8v8.5"/></g></symbol>
+  <symbol id="i-cinephile" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="4.5" y="3.5" width="15" height="17" rx="1.5"/><path d="M8 3.5v17M16 3.5v17M4.5 8h3.5M4.5 12h3.5M4.5 16h3.5M16 8h3.5M16 12h3.5M16 16h3.5"/></g></symbol>
+  <symbol id="i-awards" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5v1.5A3 3 0 0 0 7.5 10.5M17 6h2.5v1.5a3 3 0 0 1-3 3M12 14v3.5M8.5 20h7"/></g></symbol>
+  <symbol id="i-spin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.8 4v4h-4"/></g></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7h3.2c4.6 0 6 10 10.6 10h3.2M3.5 17h3.2c1.6 0 2.7-1.2 3.6-2.8M20.5 7h-3.2c-1.6 0-2.7 1.2-3.6 2.8"/><path d="M18 4.5 20.5 7 18 9.5M18 14.5l2.5 2.5-2.5 2.5"/></g></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></g></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M4.5 19.5h15"/></g></symbol>
+  <symbol id="i-podium" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M9 8.5h6v11H9zM3.5 12.5H9v7H3.5zM15 14.5h5.5v5H15z"/></g></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></g></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 2.5c.4 3-1.4 4.6-3 6.3C8 10.5 6.5 12.3 6.5 15a5.5 5.5 0 0 0 11 0c0-2.2-1-4-2.2-5.3.1 1.6-.5 2.8-1.6 3.4.5-3.6-.9-7.6-1.1-10.6z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 3.2 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m7 7 10 10M17 7 7 17"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 5h10v10M19 5 6 18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></g></symbol>
+</svg>
+
+<script src="static/demo.js"></script>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="./" aria-label="ReelDraft home">
+      <svg class="brand-mark" aria-hidden="true"><use href="#i-reel"/></svg>
+      <span>ReelDraft</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="./" >Play</a>
+      <a href="browse/" aria-current="page">The Index</a>
+      <a href="methodology/" >How it works</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+
+<section class="lost">
+  <p class="kicker">Not in the pool</p>
+  <h1 class="display">This reel is empty.</h1>
+  <p class="muted">That film isn't in the Index.</p>
+  <p class="lost-actions"><a class="btn btn-primary" href="browse/">Browse the Index</a> <a class="btn btn-ghost" href="./">Play today's board</a></p>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <span class="foot-brand"><svg aria-hidden="true"><use href="#i-reel"/></svg>ReelDraft</span>
+    <p>Data from IMDb non-commercial datasets, Wikidata, the Academy Awards database and Letterboxd public pages. Box office in constant 2025 dollars. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  </div>
+<p><b>Demo build.</b> This copy runs entirely in your browser, so the daily leaderboard and Letterboxd import are switched off.</p></footer>
+
+</body>
+</html>
