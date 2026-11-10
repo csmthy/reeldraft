@@ -4,22 +4,35 @@ A daily movie-draft game built on a film rating index I assembled from six data 
 
 Each round, a wheel lands on a decade and a genre and offers four films. You draft four films over four spins, then seat each one in a category where you think it's strongest: **Commercial, Critics, Audience, Cinephile or Awards**. You can only fill four of the five seats, and the empty one scores your weakest film in that category, so you have to decide what to give up. Scores stay hidden until you lock in. Movie knowledge wins, not luck.
 
-![Result screen](docs/screenshots/reveal.png)
+**[Play the demo](https://csmthy.github.io/reeldraft/)**: today's board, endless mode and the full film index, running entirely in the browser.
+
+![Result screen](docs/screenshots/reveal.jpg)
+
+## How a game works
+
+1. **Spin.** Two reels land on a decade and a genre, such as 1990s Romance.
+2. **Draft.** Pick one of the four films offered, judging on poster and gut alone. Repeat four times. You get two lifelines per game: a new wheel, or four different films from the same wheel.
+3. **Seat.** Drag or tap each film into the category you think it's best at. One seat stays empty and takes your slate's lowest number in that category, so choosing what to punt is part of the strategy.
+4. **Reveal.** Each seat shows the film's score in that category, the total is the average of all five, and a verdict stamps down from Flop to Blockbuster. A single weak seat can drop you a tier even if your average qualifies.
+
+| The intro | Drafting |
+|---|---|
+| ![Intro](docs/screenshots/intro.jpg) | ![Draft](docs/screenshots/draft.jpg) |
+| **Seating the slate** | **Every film's fingerprint, after the reveal** |
+| ![Seat](docs/screenshots/seat.jpg) | ![Fingerprints](docs/screenshots/fingerprints.jpg) |
+
+After the reveal you can show the **best possible lineup** for the films you drafted, copy an emoji result grid, or download a share card image drawn on a canvas.
 
 ## Features
 
-- **Daily game:** everyone gets the same seeded wheel each day, with a leaderboard. One attempt per day, and the server re-scores every submission.
-- **Endless mode** for unlimited practice, plus an easy mode that shows stats while you draft.
-- **Lifelines:** one new wheel and one reroll of the four films per game.
-- **Result card:** a downloadable share image and a copyable emoji grid, plus a "best possible lineup" reveal.
-- **The Reel Index:** a browsable ranking of 9,409 films with a detail page for each, showing how it scores in all five categories and the raw numbers behind them.
-- **Letterboxd Four Favorites:** enter a Letterboxd username and get your four favorite films scored.
+- **Daily game:** everyone gets the same seeded wheel each day. In the full app there's one attempt per day, a leaderboard, a streak counter, and every submission is re-scored on the server so scores can't be faked.
+- **Endless mode** for unlimited practice, with a personal best.
+- **Easy mode** shows each film's stats while you draft and marks the run on the leaderboard.
+- **Rarity bonus:** a nightly job adds points for strong picks that few other players made that day, so the obvious pick is never the best one.
+- **Letterboxd Four Favorites:** enter a Letterboxd username and get your four favorite films scored with their best seating, with a separate leaderboard.
+- **The Reel Index:** a searchable ranking of 9,409 films, filterable by decade and genre, with a page for each film.
 
-| Drafting | Film page |
-|---|---|
-| ![Draft](docs/screenshots/draft.png) | ![Film page](docs/screenshots/film.png) |
-
-## How the scores work
+## The Reel Index
 
 Every film gets a 0–100 percentile rank in each category, measured against the whole pool:
 
@@ -31,7 +44,13 @@ Every film gets a 0–100 percentile rank in each category, measured against the
 | Cinephile | Letterboxd average rating |
 | Awards | Oscar nominations plus wins, with wins counted double |
 
-A game's total is the average of the five seats. Verdicts run from Flop to Blockbuster, and a single weak seat can drop you a tier even if your average qualifies. The same engine (`app/scoring.py`) scores the game and ranks the Index, and the browser mirrors it so results appear instantly.
+The Reel Score is the average of the five. The same engine (`app/scoring.py`) scores the game and ranks the Index, and the browser mirrors it so results appear instantly.
+
+| Browse and filter | A film's page |
+|---|---|
+| ![Browse](docs/screenshots/browse.jpg) | ![Film page](docs/screenshots/film.jpg) |
+
+![Methodology page](docs/screenshots/methodology.jpg)
 
 ## Data pipeline
 
@@ -49,6 +68,16 @@ A game's total is the average of the five seats. Verdicts run from Flop to Block
 
 Films without enough data are kept out of the draft, which leaves 9,409 playable films across 95 decade-and-genre combinations.
 
+## Mobile
+
+The whole site is responsive: the wheel, cards and seats reflow for a phone, and seating works by tapping as well as dragging.
+
+<img src="docs/screenshots/mobile.jpg" alt="Mobile" width="320">
+
+## The demo vs. the full app
+
+The full app is a Flask server with SQLite. The demo at the link above is a static build of the same front end (`tools/build_demo.py`): `app/static/demo.js` answers the game's API calls in the browser, seeding the daily board from the date and scoring with the same engine. The leaderboard and Letterboxd import need a server, so in the demo they say so instead of running.
+
 ## Run it
 
 Requires Python 3.10+.
@@ -58,11 +87,10 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 cp .env.example .env                     # add API keys if you have them; all optional
 .venv/bin/python pipeline/run_all.py     # builds the data; the Letterboxd stage takes a while
 .venv/bin/python app/app.py              # http://127.0.0.1:5023
+.venv/bin/python tools/build_demo.py     # optional: the static demo, written to site/
 ```
 
-On a Mac, `Open ReelDraft.command` starts the app and opens the browser.
-
-The built data isn't in the repo because it's derived from IMDb, TMDB and other sources whose terms don't allow redistribution. The pipeline rebuilds it. Posters load from TMDB at runtime; without them the game shows title cards, as in these screenshots.
+On a Mac, `Open ReelDraft.command` starts the app and opens the browser. The built data isn't committed to `main`; the pipeline rebuilds it. Posters load from TMDB at runtime, and the screenshots here show the title cards the game falls back to without them.
 
 ## Layout
 
@@ -72,8 +100,9 @@ app/
   scoring.py      the scoring engine
   jobs_rarity.py  nightly job that rewards rare picks in the daily
   templates/      Index, film and methodology pages
-  static/         game client (vanilla JS), styles, self-hosted display font
+  static/         game client (vanilla JS), demo layer, styles, self-hosted display font
 pipeline/         the nine-stage data build (run_all.py runs it end to end)
+tools/            static demo builder
 docs/DESIGN.md    the original design document
 ```
 
