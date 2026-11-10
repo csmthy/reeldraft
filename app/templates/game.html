@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}{{ site }} · the daily movie draft{% endblock %}
+{% block bodyclass %}is-game{% endblock %}
+{% block content %}
+<div id="game">
+
+  <!-- START -->
+  <section class="screen active" id="scr-intro" aria-labelledby="introTitle">
+    <div class="marquee">
+      <div class="bulbs" aria-hidden="true"><i class="bt"></i><i class="bb"></i><i class="bl"></i><i class="br"></i></div>
+      <div class="marquee-in">
+        <p class="kicker" id="introDay">Today's board</p>
+        <h1 class="marquee-title" id="introTitle">Draft four films.<br>Fill five seats.</h1>
+        <p class="marquee-sub">Pick on poster and gut alone. The numbers only come out at the end.</p>
+        <div class="start">
+          <label class="field handle-field">
+            <span class="sr">Name for the leaderboard</span>
+            <input type="text" id="handle" placeholder="Your name for the leaderboard" maxlength="24" autocomplete="nickname">
+          </label>
+          <div class="start-actions">
+            <button class="btn btn-primary btn-lg" id="btnDaily">Play today's board</button>
+            <button class="btn btn-ghost btn-lg" id="btnEndless"><svg aria-hidden="true"><use href="#i-spin"/></svg>Endless</button>
+          </div>
+        </div>
+        <div class="start-meta">
+          <label class="switch">
+            <input type="checkbox" id="easyMode">
+            <span class="switch-track" aria-hidden="true"></span>
+            <span class="switch-text">Easy mode <small>stats visible while drafting, marked on the board</small></span>
+          </label>
+          <span class="streak" id="introStreak" hidden><svg aria-hidden="true"><use href="#i-flame"/></svg><span></span></span>
+        </div>
+      </div>
+    </div>
+
+    <ol class="how">
+      <li><span class="how-n">1</span><div><b>Spin</b><span>Two reels land on a decade and a genre.</span></div></li>
+      <li><span class="how-n">2</span><div><b>Draft</b><span>Pick one of four films. Do it four times.</span></div></li>
+      <li><span class="how-n">3</span><div><b>Seat</b><span>Put each film where it scores best. One seat stays empty and takes your weakest number.</span></div></li>
+    </ol>
+
+    <div class="pillar-row" aria-label="The five pillars">
+      <span class="pillar-tag" style="--c:var(--commercial)" tabindex="0"><svg aria-hidden="true"><use href="#i-commercial"/></svg>Commercial<span class="tip">Worldwide box office in 2025 dollars</span></span>
+      <span class="pillar-tag" style="--c:var(--critics)" tabindex="0"><svg aria-hidden="true"><use href="#i-critics"/></svg>Critics<span class="tip">Rotten Tomatoes and Metacritic</span></span>
+      <span class="pillar-tag" style="--c:var(--audience)" tabindex="0"><svg aria-hidden="true"><use href="#i-audience"/></svg>Audience<span class="tip">IMDb user rating</span></span>
+      <span class="pillar-tag" style="--c:var(--cinephile)" tabindex="0"><svg aria-hidden="true"><use href="#i-cinephile"/></svg>Cinephile<span class="tip">Letterboxd rating</span></span>
+      <span class="pillar-tag" style="--c:var(--awards)" tabindex="0"><svg aria-hidden="true"><use href="#i-awards"/></svg>Awards<span class="tip">Oscar nominations and wins</span></span>
+    </div>
+
+    <section class="fav4" aria-labelledby="fav4Title">
+      <div class="fav4-head">
+        <h2 id="fav4Title">Score a Letterboxd Fav 4</h2>
+        <p class="muted">Any profile's four favorites, run through the same engine.</p>
+      </div>
+      <form class="fav4-form" id="fav4Form">
+        <label class="field">
+          <span class="sr">Letterboxd username</span>
+          <input type="text" id="fav4User" placeholder="letterboxd username" autocapitalize="off" spellcheck="false">
+        </label>
+        <button class="btn btn-ghost" id="btnFav4" type="submit">Score it</button>
+      </form>
+      <div id="fav4Out" aria-live="polite"></div>
+    </section>
+  </section>
+
+  <!-- DRAFT -->
+  <section class="screen" id="scr-draft" aria-label="Draft">
+    <div class="stage-bar">
+      <div class="tray" id="tray" aria-label="Your picks"></div>
+      <div class="stage-count"><span id="spinCount">Pick 1 of 4</span><span class="easy-flag" id="easyFlag" hidden>Easy mode</span></div>
+    </div>
+    <div class="reels" aria-live="polite">
+      <div class="reel"><span class="reel-label">Decade</span><div class="reel-window"><div class="reel-strip" id="reelDecade"></div></div></div>
+      <div class="reel"><span class="reel-label">Genre</span><div class="reel-window"><div class="reel-strip" id="reelGenre"></div></div></div>
+    </div>
+    <div class="choices" id="choices"></div>
+    <div class="lifelines">
+      <button class="lifeline" id="btnRespin" title="Spin the reels again for a new decade and genre"><svg aria-hidden="true"><use href="#i-spin"/></svg><span>New wheel</span><span class="pip">1</span></button>
+      <button class="lifeline" id="btnReroll" title="Four different films from the same decade and genre"><svg aria-hidden="true"><use href="#i-shuffle"/></svg><span>Four new films</span><span class="pip">1</span></button>
+    </div>
+  </section>
+
+  <!-- SEAT -->
+  <section class="screen" id="scr-seat" aria-labelledby="seatTitle">
+    <div class="stage-title">
+      <h1 class="display" id="seatTitle">Seat your slate</h1>
+      <p class="muted">Each film scores its number in the seat you give it. The empty seat takes your slate's lowest number there.</p>
+    </div>
+    <div class="hand" id="hand" aria-label="Your films"></div>
+    <div class="seats" id="seats"></div>
+    <div class="lockbar">
+      <span class="lock-hint" id="seatHint">Choose a film, then a seat</span>
+      <button class="btn btn-primary btn-lg" id="btnLockIn" disabled>Lock it in</button>
+    </div>
+  </section>
+
+  <!-- REVEAL -->
+  <section class="screen" id="scr-reveal" aria-label="Result">
+    <div class="verdict">
+      <p class="kicker" id="revealHead"></p>
+      <div class="big-score" id="revealScore">0.0</div>
+      <div class="stamp-wrap"><span class="stamp" id="revealVerdict"></span></div>
+      <p class="demoted" id="revealDemoted" hidden></p>
+      <p class="rank-line" id="revealRank"></p>
+      <div class="tiles" id="emojiGrid" aria-hidden="true"></div>
+    </div>
+    <div class="result-grid" id="resultGrid"></div>
+    <p class="optimal-note" id="optimalNote" hidden></p>
+    <div class="actions">
+      <button class="btn btn-ghost" id="btnOptimal"><svg aria-hidden="true"><use href="#i-eye"/></svg><span>Show best lineup</span></button>
+      <button class="btn btn-primary" id="btnShare"><svg aria-hidden="true"><use href="#i-copy"/></svg>Copy result</button>
+      <button class="btn btn-ghost" id="btnCard"><svg aria-hidden="true"><use href="#i-download"/></svg>Download card</button>
+      <button class="btn btn-ghost" id="btnBoard"><svg aria-hidden="true"><use href="#i-podium"/></svg>Leaderboard</button>
+      <button class="btn btn-ghost" id="btnAgain" hidden><svg aria-hidden="true"><use href="#i-spin"/></svg>Spin again</button>
+    </div>
+    <section class="prints" id="revealFilms" aria-label="Film fingerprints"></section>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section class="screen" id="scr-board" aria-labelledby="boardTitle">
+    <div class="stage-title">
+      <h1 class="display" id="boardTitle">Today's board</h1>
+      <p class="muted" id="boardMeta"></p>
+    </div>
+    <div class="board-card"><table class="board" id="lbTable"></table></div>
+    <div class="actions">
+      <button class="btn btn-ghost" id="btnBackReveal">Back to my result</button>
+      <button class="btn btn-primary" id="btnEndless2"><svg aria-hidden="true"><use href="#i-spin"/></svg>Play endless</button>
+    </div>
+    <h2 class="section-title">Fav 4s, all time</h2>
+    <div class="board-card"><table class="board" id="fav4Table"></table></div>
+  </section>
+
+</div>
+<canvas id="shareCanvas" width="1200" height="630" hidden></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% endblock %}
+{% block scripts %}
+<script>window.SITE_NAME = {{ site | tojson }};</script>
+<script src="/static/game.js?v=2"></script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}How it works · {{ index_name }}{% endblock %}
+{% block content %}
+<section class="method-hero">
+  <p class="kicker">How it works</p>
+  <h1 class="display">Five ways to judge a film.</h1>
+  <p>{{ index_name }} turns every major rating system into five pillars and one {{ score_name }}. The same numbers power the {{ site }} daily game. The pool holds <b>{{ '{:,}'.format(n_films) }}</b> films, and <b>{{ '{:,}'.format(n_complete) }}</b> have all five pillars, so they're ranked and draftable.</p>
+</section>
+
+<div class="pillar-cards">
+  <article class="pillar-card" style="--c:var(--commercial)"><svg aria-hidden="true"><use href="#i-commercial"/></svg><h3>Commercial</h3><p>Worldwide gross in constant 2025 dollars, using the BLS CPI. Star Wars counts as a $4B film, not a $775M one.</p></article>
+  <article class="pillar-card" style="--c:var(--critics)"><svg aria-hidden="true"><use href="#i-critics"/></svg><h3>Critics</h3><p>Rotten Tomatoes critics score and Metacritic, averaged when both exist.</p></article>
+  <article class="pillar-card" style="--c:var(--audience)"><svg aria-hidden="true"><use href="#i-audience"/></svg><h3>Audience</h3><p>IMDb user rating.</p></article>
+  <article class="pillar-card" style="--c:var(--cinephile)"><svg aria-hidden="true"><use href="#i-cinephile"/></svg><h3>Cinephile</h3><p>Letterboxd weighted average rating.</p></article>
+  <article class="pillar-card" style="--c:var(--awards)"><svg aria-hidden="true"><use href="#i-awards"/></svg><h3>Awards</h3><p>Oscar nominations plus wins. A win counts double.</p></article>
+</div>
+
+<h2 class="section-title">The numbers</h2>
+<div class="prose">
+  <p>Each pillar is a <b>percentile rank across the whole pool</b>, from 0 to 100. A 99 beats 99% of ranked films on that pillar. Box office is inflation-adjusted first, so older films compete fairly on money. The {{ score_name }} is the average of the five pillars, and only films with all five are ranked.</p>
+  <p>Where a pillar has two sources (Rotten Tomatoes and Metacritic), this version ranks their simple average. Changes to the method will be logged on this page.</p>
+</div>
+
+<h2 class="section-title">How the game scores you</h2>
+<div class="prose">
+  <p>You draft <b>four films</b> into <b>five seats</b>, so one seat stays empty. Each film scores its own number for the pillar it sits in. The empty seat scores your slate's <b>lowest</b> number in that pillar, so misreading a film costs you. Your score is the average of the five seats.</p>
+</div>
+<div class="ladder">
+  <div class="rung" style="--tc:var(--bulb-hi)"><b>Blockbuster</b><span>93 or higher, with no seat under 65</span></div>
+  <div class="rung" style="--tc:var(--great)"><b>Smash Hit</b><span>82 or higher, with no seat under 55</span></div>
+  <div class="rung" style="--tc:var(--audience)"><b>Solid Opening</b><span>70 or higher</span></div>
+  <div class="rung" style="--tc:var(--meh)"><b>Underperformer</b><span>52 or higher</span></div>
+  <div class="rung" style="--tc:var(--bad)"><b>Flop</b><span>Anything below 52</span></div>
+</div>
+<div class="prose">
+  <p>A weak seat demotes you: a slate that clears 93 with a seat under 65 drops to the next tier it qualifies for. After each daily board closes, strong picks that few players made earn a <b>rarity bonus</b>. The obvious pick is rarely the best one.</p>
+</div>
+
+<h2 class="section-title">Sources</h2>
+<p class="sources">IMDb non-commercial datasets (ratings, votes, credits) · Wikidata (box office, critic scores, CC0) · TMDB (posters, budget and revenue; this product uses the TMDB API but is not endorsed or certified by TMDB) · OMDb (Rotten Tomatoes, Metacritic) · DLu/oscar_data (Academy Award history) · Letterboxd public film pages, fetched once at build time (Letterboxd is a trademark of Letterboxd Limited; this site is unaffiliated) · BLS CPI-U for inflation.</p>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ f['title'] }} ({{ f['year'] }}) · {{ index_name }}{% endblock %}
+{% block content %}
+<section class="film-hero">
+  {% if f['poster'] %}<div class="backdrop" style="background-image:url('{{ f['poster'] }}')"></div>{% endif %}
+  <div class="film-head">
+    <div class="art">
+      <span class="noart">{{ f['title'] }}</span>
+      {% if f['poster'] %}<img src="{{ f['poster'] }}" alt="{{ f['title'] }} poster" onerror="this.remove()">{% endif %}
+    </div>
+    <div>
+      <a class="kicker" href="/browse">{{ index_name }}</a>
+      <h1 class="film-title">{{ f['title'] }}<small>{{ f['year'] }}</small></h1>
+      <p class="film-by">Directed by <b>{{ directors | join(', ') }}</b></p>
+      <div class="tags">
+        {% for g in genres %}<span class="tag">{{ g }}</span>{% endfor %}
+        {% if f['runtime'] %}<span class="tag">{{ f['runtime'] }} min</span>{% endif %}
+        <span class="tag">{{ f['decade'] }}</span>
+      </div>
+      <div class="film-score">
+        {% if f['composite'] is not none %}
+        <div class="score-badge">
+          <b>{{ f['composite'] }}</b>
+          <span><strong>{{ score_name }}</strong>{% if rank %}#{{ '{:,}'.format(rank[0]) }} of {{ '{:,}'.format(rank[1]) }} films{% endif %}{% if not f['complete'] %}Partial data{% endif %}</span>
+        </div>
+        {% endif %}
+        <div class="ext">
+          <a href="https://www.imdb.com/title/{{ f['tt'] }}/" target="_blank" rel="noopener">IMDb<svg aria-hidden="true"><use href="#i-out"/></svg></a>
+          {% if f['tmdb_id'] %}<a href="https://www.themoviedb.org/movie/{{ f['tmdb_id'] }}" target="_blank" rel="noopener">TMDB<svg aria-hidden="true"><use href="#i-out"/></svg></a>{% endif %}
+          {% if f['lb_slug'] %}<a href="https://letterboxd.com/film/{{ f['lb_slug'] }}/" target="_blank" rel="noopener">Letterboxd<svg aria-hidden="true"><use href="#i-out"/></svg></a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Fingerprint</h2>
+    <p>Percentile across the whole pool: 99 beats 99% of films on that pillar.</p>
+  </div>
+  <div class="fp">
+    {% for key, label, val, rawtext in pillars %}
+    <div class="fp-row" style="--c:var(--{{ key }})">
+      <span class="lab"><svg aria-hidden="true"><use href="#i-{{ key }}"/></svg>{{ label }}</span>
+      <span class="rawv">{{ rawtext }}</span>
+      <span class="track"><span class="fill" data-w="{{ val or 0 }}"></span></span>
+      <span class="val">{{ val if val is not none else '—' }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="grid2">
+  <section class="panel">
+    <div class="panel-head"><h2>Ratings</h2></div>
+    <div class="stat-list">
+      <div class="stat"><span>Rotten Tomatoes</span><b>{{ f['rt'] ~ '%' if f['rt'] is not none else '—' }}</b></div>
+      <div class="stat"><span>Metacritic</span><b>{{ f['mc'] if f['mc'] is not none else '—' }}{% if f['mc'] is not none %}<small>out of 100</small>{% endif %}</b></div>
+      <div class="stat"><span>IMDb</span><b>{{ f['imdb_rating'] }}<small>{{ '{:,}'.format(f['imdb_votes']) }} votes</small></b></div>
+      <div class="stat"><span>Letterboxd</span><b>{% if f['lb_rating'] %}{{ f['lb_rating'] }}{% else %}—{% endif %}{% if f['lb_count'] %}<small>{{ '{:,}'.format(f['lb_count']) }} ratings</small>{% endif %}</b></div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Box office</h2></div>
+    <div class="stat-list">
+      <div class="stat"><span>Worldwide gross<small>in 2025 dollars</small></span><b>{% if f['revenue_adj'] %}${{ '{:,.0f}'.format(f['revenue_adj']) }}{% else %}Not recorded{% endif %}</b></div>
+      <div class="stat"><span>Worldwide gross<small>in {{ f['year'] }} dollars</small></span><b>{% if f['revenue'] %}${{ '{:,.0f}'.format(f['revenue']) }}{% else %}Not recorded{% endif %}</b></div>
+      {% if f['budget'] %}<div class="stat"><span>Budget<small>in {{ f['year'] }} dollars</small></span><b>${{ '{:,.0f}'.format(f['budget']) }}</b></div>{% endif %}
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Academy Awards</h2>
+    <p>{{ f['noms'] }} nomination{{ 's' if f['noms'] != 1 }} · {{ f['wins'] }} win{{ 's' if f['wins'] != 1 }}</p>
+  </div>
+  {% if oscar_cats %}
+  <div class="oscars">
+    {% for c in oscar_cats|sort(attribute='w', reverse=True) %}
+    <div class="oscar{% if c['w'] %} won{% endif %}"><svg aria-hidden="true"><use href="#i-awards"/></svg>{{ c['c'] }}<small>{% if c['w'] %}Won{% else %}Nominated{% endif %}</small></div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted" style="margin:0">No Academy Award nominations.</p>
+  {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const fills = document.querySelectorAll(".fp .fill");
+  requestAnimationFrame(() => requestAnimationFrame(() => fills.forEach(el => { el.style.width = el.dataset.w + "%"; })));
+})();
+</script>
+{% endblock %}

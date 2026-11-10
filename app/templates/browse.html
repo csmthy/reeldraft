@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ index_name }} · every rating system, one score{% endblock %}
+{% block content %}
+{% set pillar_keys = ['commercial', 'critics', 'audience', 'cinephile', 'awards'] %}
+<section class="index-hero">
+  <div>
+    <p class="kicker">{{ index_name }}</p>
+    <h1 class="display">Every rating system,<br>one score.</h1>
+    <p class="muted">Critics, audiences, cinephiles, inflation-adjusted box office and Oscar history, combined into a single {{ score_name }}. <a href="/methodology">How it's calculated</a></p>
+  </div>
+  <div class="legend" aria-label="Pillar colors">
+    {% for k in pillar_keys %}<span style="--c:var(--{{ k }})"><i></i>{{ k | capitalize }}</span>{% endfor %}
+  </div>
+</section>
+
+<form class="filters" method="get" action="/browse" id="filters">
+  <label class="field search">
+    <span class="sr">Search titles</span>
+    <svg aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="text" name="q" placeholder="Search titles" value="{{ q }}" autocomplete="off">
+  </label>
+  <label class="select">
+    <span class="sr">Decade</span>
+    <select name="decade">
+      <option value="">All decades</option>
+      {% for d in decades %}<option value="{{ d }}" {% if d == decade %}selected{% endif %}>{{ d }}</option>{% endfor %}
+    </select>
+  </label>
+  <label class="select">
+    <span class="sr">Genre</span>
+    <select name="genre">
+      <option value="">All genres</option>
+      {% for g in genres %}<option value="{{ g }}" {% if g == genre %}selected{% endif %}>{{ g }}</option>{% endfor %}
+    </select>
+  </label>
+  <button class="btn btn-ghost" type="submit">Filter</button>
+</form>
+
+{% if films %}
+<p class="result-count">{% if q or decade or genre %}{{ films|length }}{% if films|length == 250 %}+{% endif %} {{ 'film' if films|length == 1 else 'films' }} matching{% else %}Top {{ films|length }} films by {{ score_name }}{% endif %}</p>
+<div class="list">
+  {% for f in films %}
+  <div class="row{% if loop.index <= 3 %} top3{% endif %}">
+    <span class="rk">{{ loop.index }}</span>
+    <div class="art"><span class="noart">{{ f['title'] }}</span>{% if f['poster'] %}<img src="{{ f['poster'] }}" alt="" loading="lazy" decoding="async" onerror="this.remove()">{% endif %}</div>
+    <div class="row-title">
+      <a href="/film/{{ f['tt'] }}">{{ f['title'] }}</a>
+      <div class="meta"><span>{{ f['year'] }}</span><span>{{ f['primary_genre'] }}</span>{% if f['runtime'] %}<span>{{ f['runtime'] }} min</span>{% endif %}</div>
+    </div>
+    <div class="spark" title="Commercial {{ f['s_commercial'] }} · Critics {{ f['s_critics'] }} · Audience {{ f['s_audience'] }} · Cinephile {{ f['s_cinephile'] }} · Awards {{ f['s_awards'] }}">
+      {% for k in pillar_keys %}<i style="--c:var(--{{ k }});--v:{{ f['s_' ~ k] or 0 }}"></i>{% endfor %}
+    </div>
+    <span class="score">{{ f['composite'] }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <h2>No films match</h2>
+  <p>Try a shorter title or clear a filter.</p>
+  <a class="btn btn-ghost" href="/browse">Clear filters</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const form = document.getElementById("filters");
+  form.querySelectorAll("select").forEach(s => s.addEventListener("change", () => form.requestSubmit()));
+  const q = form.querySelector("input[name=q]");
+  q.addEventListener("search", () => form.requestSubmit());
+})();
+</script>
+{% endblock %}

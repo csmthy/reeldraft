@@ -1,0 +1,9 @@
+# local environment
+.venv/
+.env
+__pycache__/
+.DS_Store
+
+# built data (regenerate with: python pipeline/run_all.py)
+data/
+app/static/game_data.json
