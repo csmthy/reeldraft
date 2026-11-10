@@ -188,6 +188,9 @@ function randomBoard(data) {
   }
   return spins;
 }
+// The static demo build (tools/build_demo.py) sets RD_DEMO and serves film pages from one URL.
+const filmUrl = (id) => window.RD_DEMO ? `film/?id=${id}` : `/film/${id}`;
+
 const briefOf = (data, fid) => {
   const f = data.films[fid];
   return { id: fid, title: f.title, year: f.year, director: f.director,
@@ -552,7 +555,7 @@ function renderReveal() {
   $("revealDemoted").textContent = res.demoted
     ? `Demoted: your weakest seat scored ${res.worst_seat}` : "";
   $("revealRank").innerHTML = S.mode === "daily"
-    ? `<b>#${res.rank}</b> of ${res.players} today`
+    ? (res.demo ? `Demo build: daily rankings need the live server` : `<b>#${res.rank}</b> of ${res.players} today`)
     : (res.newBest ? `<b>New personal best</b>` : `Personal best <b>${res.endlessBest}</b>`);
   $("emojiGrid").innerHTML = PILLARS.map((p, i) =>
     `<i style="--tc:${scoreColor(res.seat_scores[p])};--i:${i}" title="${PILLAR_LABELS[p]} ${res.seat_scores[p]}"></i>`).join("");
@@ -645,10 +648,10 @@ function renderFilmDetails() {
           <span class="val">${f.scores[q]}</span>
         </div>`).join("");
       const r = f.raw || {};
-      row.innerHTML = `<a href="/film/${f.id}" tabindex="-1" aria-hidden="true">${art(f)}</a>
+      row.innerHTML = `<a href="${filmUrl(f.id)}" tabindex="-1" aria-hidden="true">${art(f)}</a>
         <div>
           <div class="print-top">
-            <h3><a href="/film/${f.id}">${esc(f.title)}</a><small>${f.year}</small></h3>
+            <h3><a href="${filmUrl(f.id)}">${esc(f.title)}</a><small>${f.year}</small></h3>
             <span class="seat-chip">${icon(p)}${PILLAR_LABELS[p]} seat · <b>${res.seat_scores[p]}</b></span>
           </div>
           <div class="bars">${bars}</div>
@@ -831,7 +834,7 @@ async function renderBoard() {
         <td><span class="vpill">${esc(e.verdict)}</span></td>
         <td class="num hide-sm">${e.bonus ? `<span class="bonus">+${e.bonus}</span>` : ""}</td>
         <td class="num final">${e.final}</td></tr>`).join("") + "</tbody>"
-    : `<tbody><tr><td class="board-empty">Nobody has played today's board yet.</td></tr></tbody>`;
+    : `<tbody><tr><td class="board-empty">${d.demo ? "The leaderboard needs the live server, so it's switched off in this demo." : "Nobody has played today's board yet."}</td></tr></tbody>`;
   const r2 = await fetch("/api/fav4_leaderboard");
   const d2 = await r2.json();
   $("fav4Table").innerHTML = d2.top.length
@@ -841,7 +844,7 @@ async function renderBoard() {
         <td class="films">${e.titles.map(esc).join(" · ")}</td>
         <td><span class="vpill">${esc(e.verdict)}</span></td>
         <td class="num final">${e.total}</td></tr>`).join("") + "</tbody>"
-    : `<tbody><tr><td class="board-empty">No Fav 4s scored yet.</td></tr></tbody>`;
+    : `<tbody><tr><td class="board-empty">${d2.demo ? "Letterboxd scores need the live server, so they're switched off in this demo." : "No Fav 4s scored yet."}</td></tr></tbody>`;
 }
 
 /* ---------------- fav4 import ---------------- */
@@ -863,14 +866,15 @@ $("fav4Form").onsubmit = async (e) => {
       "profile not found": "No Letterboxd profile with that name.",
       "letterboxd unreachable": "Letterboxd didn't respond. Try again in a minute.",
       "no favorites found on profile": "That profile has no favorite films set.",
-      "too few of these favorites are in the pool": "Too few of those favorites are in the film pool to score." }[d.error] || d.error;
+      "too few of these favorites are in the pool": "Too few of those favorites are in the film pool to score.",
+      "demo": "Letterboxd import reads your profile through the live server, so it doesn't work in this demo. Run the app locally to try it." }[d.error] || d.error;
     $("fav4Out").innerHTML = `<p class="fav4-msg err">${esc(msg)}</p>`;
     return;
   }
   const films = PILLARS.filter(p => d.films[p]).map(p => d.films[p]);
   $("fav4Out").innerHTML = `<div class="fav4-result">
       <div class="fav4-score"><b>${d.total}</b><span>${esc(d.verdict)}</span></div>
-      <div class="fav4-posters">${films.map(f => `<a href="/film/${f.id}" title="${esc(f.title)} (${f.year})">${art(f)}</a>`).join("")}</div>
+      <div class="fav4-posters">${films.map(f => `<a href="${filmUrl(f.id)}" title="${esc(f.title)} (${f.year})">${art(f)}</a>`).join("")}</div>
       <p class="fav4-note">${esc(u)}'s Fav 4 would beat ${d.today.would_beat} of ${d.today.players} players on today's board.
       ${d.unmatched.length ? `Not in the pool: ${d.unmatched.map(esc).join(", ")}.` : ""}</p>
     </div>`;
